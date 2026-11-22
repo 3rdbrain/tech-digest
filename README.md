@@ -35,12 +35,11 @@ can trigger runs on demand from Mistral Studio — no managed deployment slot ne
    cp .env.example .env
    # put a Mistral API key (console.mistral.ai → API keys) into MISTRAL_API_KEY in .env
    ```
-3. Serve the worker:
-   ```bash
-   bun install          # installs the pinned toolchain (bun is required only here)
-   mistral apps dev --filter worker
-   ```
-   (No bun? `bash tools/uv.sh sync --all-packages` then `bash tools/uv.sh run --all-packages python -m worker.entrypoints.dev` works too.)
+3. (VS Code) Open the folder in VS Code — the Python extension picks up the `.venv` automatically. Two ways to serve the worker:
+   - **F5** → "Serve tech-digest worker", or
+   - terminal: `bun install` then `mistral apps dev --filter worker`
+   (No bun? `bash tools/uv.sh run --all-packages python -m worker.entrypoints.dev`. No IDE? Same commands in any terminal.)
+   Before serving, you can verify the HN side alone with **F5** → "Smoke test: fetch HN front page" — it needs no API key.
 4. Trigger: in Mistral Studio → Workflows → `hn-tech-digest` → Run with input `{}`.
    Approve the Gmail OAuth prompt when asked — the email is sent from your account.
 
