@@ -19,6 +19,34 @@ The workflow runs `on_behalf_of` the triggering user, so the email is sent from 
 authenticated Gmail account. There is no schedule: it is a one-shot task, started on
 demand (from Mistral Studio or `execute_workflow`).
 
+## Run it yourself (self-hosted worker)
+
+Run the worker on your own machine; it registers with Mistral's hosted control plane, so you
+can trigger runs on demand from Mistral Studio — no managed deployment slot needed.
+
+1. Install the Mistral CLI and sign in:
+   ```bash
+   curl -fsSL https://mistral.ai/cli/install.sh | bash
+   mistral login
+   ```
+2. Clone this repo and configure the worker:
+   ```bash
+   git clone https://github.com/3rdbrain/tech-digest && cd tech-digest
+   cp .env.example .env
+   # put a Mistral API key (console.mistral.ai → API keys) into MISTRAL_API_KEY in .env
+   ```
+3. Serve the worker:
+   ```bash
+   bun install          # installs the pinned toolchain (bun is required only here)
+   mistral apps dev --filter worker
+   ```
+   (No bun? `bash tools/uv.sh sync --all-packages` then `bash tools/uv.sh run --all-packages python -m worker.entrypoints.dev` works too.)
+4. Trigger: in Mistral Studio → Workflows → `hn-tech-digest` → Run with input `{}`.
+   Approve the Gmail OAuth prompt when asked — the email is sent from your account.
+
+The first `curl` step needs an API key with available usage; when your plan's included
+monthly usage is exhausted, enabling pay-as-you-go with credits in the console is required.
+
 ## Layout
 
 - `apps/worker/src/worker/workflows/tech_digest.py` — the workflow and activities.
